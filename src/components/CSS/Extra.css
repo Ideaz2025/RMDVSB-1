@@ -1,0 +1,143 @@
+/* Horizontal scroll container styles */
+.horizontal-autoscroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 2.5rem; /* Increased gap for more breathing room */
+  padding-bottom: 2.5rem;
+  scroll-behavior: smooth;
+  /* Hide scrollbar for a cleaner look */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.horizontal-autoscroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Inner track animation for looping effect */
+@keyframes autoscroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+.autoscroll-track {
+  display: flex;
+  min-width: 100%;
+  animation: autoscroll 25s linear infinite; /* Slower animation for a more elegant feel */
+}
+
+/* Card styles */
+.event-card {
+  min-width: 360px; /* Slightly wider cards */
+  max-width: 420px;
+  background: #393838; /* White background for a clean look */
+  border-radius: 20px; /* Softer, larger border radius */
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.08); /* More subtle, deeper shadow */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.8rem;
+  padding: 1.5rem; /* Increased padding */
+  margin-bottom: 0.5rem;
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother transition */
+  border: 1px solid #e0e6ed; /* Thinner, lighter border */
+}
+.event-card:hover {
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.15); /* More pronounced, yet elegant shadow on hover */
+  transform: translateY(-8px) scale(1.02);
+  border-color: #d1d9e6;
+}
+.event-photo img {
+  max-width: 60px; /* Larger photo */
+  border-radius: 16px;
+  background: #f8f9fa;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e9ecef;
+}
+.event-card h3 {
+  color: #1d2d3a; /* Darker, more sophisticated text color */
+  font-size: 1.35rem; /* Slightly larger headline */
+  font-weight: 600; /* Medium-heavy font weight */
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.02em; /* Tighter letter-spacing */
+}
+.event-card .event-date {
+  color: #7a828e; /* Subtler gray for the date */
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase; /* Uppercase for a modern touch */
+  letter-spacing: 0.05em;
+}
+.event-card p {
+  color: #4b5a6c;
+  margin-bottom: 0.65rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.event-card ul {
+  margin-left: 1.5rem;
+  color: #4b5a6c;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Extra events wrapper styles */
+.extra-events-wrapper {
+  padding: 2rem 1rem;
+  max-width: 900px;
+  margin: 60px auto;
+  min-height: 80vh;
+  overflow-x: auto;
+}
+
+.extra-events-wrapper > .extra-events-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.8rem;
+  scrollbar-width: thin;
+  scrollbar-color: #1c658c transparent;
+}
+
+.event-card {
+  background: #fff;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  min-width: 0;
+}
+
+.event-card img,
+.event-card .cld-advanced-image {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+@media (max-width: 992px) {
+  .extra-events-wrapper {
+    max-width: 100%;
+    margin: 30px 0;
+    padding: 1rem 0.5rem;
+  }
+  .extra-events-wrapper > .extra-events-wrapper {
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .extra-events-wrapper > .extra-events-wrapper {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .event-card {
+    padding: 0.7rem;
+  }
+  .event-card img,
+  .event-card .cld-advanced-image {
+    max-width: 98vw;
+  }
+}

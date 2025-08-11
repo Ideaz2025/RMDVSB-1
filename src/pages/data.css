@@ -5,9 +5,8 @@
   border-radius: 18px;
   box-shadow: 0 4px 24px rgba(0,122,255,0.07);
   padding: 28px 24px 18px 24px;
-  margin: 24px 0 32px 0;
+  margin: 24px auto 32px auto; /* Center form */
   max-width: 420px;
-  margin-left: 350px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -62,42 +61,45 @@
   transform: translateY(-2px) scale(1.03);
 }
 
-/* ...existing@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+/* Responsive Design */
+@media (max-width: 768px) {
+  .book-upload-form {
+    max-width: 90%;
+    padding: 24px 16px;
+  }
 
-:root {
-  --main-blue: #1c658c;
-  --light-blue: #eaf6fb;
-  --accent-blue: #398ab9;
-  --gold: #e1c16e;
-  --text-dark: #00324e;
-  --text-light: #fff;
-}
+  .book-upload-form h3 {
+    font-size: 1.2rem;
+  }
 
-body,
-.patent-container,
-.membership-container,
-.awards-container,
-.exp-container,
-.fdp-container,
-.book-container,
-.conference-container,
-.journal-container,
-.journal-intl-container,
-.conference-intl-container {
-  font-family: 'Poppins', Arial, sans-serif;
-}
+  .book-upload-form input[type="text"] {
+    font-size: 0.95rem;
+  }
 
-body {
-  font-size: 16px;
-}
-@media (max-width: 600px) {
-  body {
-    font-size: 15px;
+  .book-upload-form button[type="submit"] {
+    font-size: 1rem;
+    padding: 9px 0;
   }
 }
-@media (max-width: 400px) {
-  body {
-    font-size: 14px;
+
+@media (max-width: 480px) {
+  .book-upload-form {
+    max-width: 100%;
+    padding: 20px 14px;
+    border-radius: 14px;
+  }
+
+  .book-upload-form h3 {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .book-upload-form input[type="text"] {
+    font-size: 0.9rem;
+  }
+
+  .book-upload-form button[type="submit"] {
+    font-size: 0.95rem;
   }
 }
 

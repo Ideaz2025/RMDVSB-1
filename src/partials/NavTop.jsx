@@ -6,6 +6,7 @@ import { IoMdClose } from "react-icons/io";
 import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import "./CSS/NavTop.css";
+import { useRef } from "react";
 
 function isMobile() {
   return window.innerWidth <= 992;
@@ -15,6 +16,10 @@ function NavTop() {
   const [mobile, setMobile] = useState(isMobile());
   const [sideMenu, setSideMenu] = useState(false);
   const [user, setUser] = useState(null);
+  const [journalOpen, setJournalOpen] = useState(false);
+  const [conferenceOpen, setConferenceOpen] = useState(false);
+  const [patentOpen, setPatentOpen] = useState(false);
+  const [bookOpen, setBookOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -38,7 +43,7 @@ function NavTop() {
     }
   };
 
-  // Responsive mobile menu
+  // Responsive mobile menu with custom dropdowns
   const mobileMenu = (
     <div
       className="side-menu"
@@ -57,6 +62,7 @@ function NavTop() {
         flexDirection: "column",
         gap: "1.2rem",
         transition: "right 0.2s",
+        overflowY: "auto"
       }}
     >
       <button
@@ -77,21 +83,110 @@ function NavTop() {
       </button>
       <Nav.Link as={NavLink} to="/" onClick={() => setSideMenu(false)}>Home</Nav.Link>
       <Nav.Link as={NavLink} to="/about" onClick={() => setSideMenu(false)}>About</Nav.Link>
-      <NavDropdown title="Journal" id="journal-dropdown-mobile">
-        <NavDropdown.Item as={NavLink} to="/journal/national" onClick={() => setSideMenu(false)}>National</NavDropdown.Item>
-        <NavDropdown.Item as={NavLink} to="/journal/international" onClick={() => setSideMenu(false)}>International</NavDropdown.Item>
-      </NavDropdown>
-      <NavDropdown title="Conference" id="conference-dropdown-mobile">
-        <NavDropdown.Item as={NavLink} to="/conference/national" onClick={() => setSideMenu(false)}>National</NavDropdown.Item>
-        <NavDropdown.Item as={NavLink} to="/conference/international" onClick={() => setSideMenu(false)}>International</NavDropdown.Item>
-      </NavDropdown>
-      <NavDropdown title="Patent" id="patent-dropdown-mobile">
-        <NavDropdown.Item as={NavLink} to="/patent/published" onClick={() => setSideMenu(false)}>Published</NavDropdown.Item>
-        <NavDropdown.Item as={NavLink} to="/patent/granted" onClick={() => setSideMenu(false)}>Granted</NavDropdown.Item>
-      </NavDropdown>
-      <NavDropdown title="Book" id="book-dropdown-mobile">
-        <NavDropdown.Item as={NavLink} to="/book/published" onClick={() => setSideMenu(false)}>Published</NavDropdown.Item>
-      </NavDropdown>
+
+      {/* Custom Dropdown: Journal */}
+      <div>
+        <button
+          onClick={() => setJournalOpen(j => !j)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1c658c",
+            fontWeight: 600,
+            fontSize: "1rem",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+            padding: "0.5rem 0"
+          }}
+        >
+          Journal {journalOpen ? "▲" : "▼"}
+        </button>
+        {journalOpen && (
+          <div style={{ paddingLeft: 18 }}>
+            <Nav.Link as={NavLink} to="/journal/national" onClick={() => setSideMenu(false)}>National</Nav.Link>
+            <Nav.Link as={NavLink} to="/journal/international" onClick={() => setSideMenu(false)}>International</Nav.Link>
+          </div>
+        )}
+      </div>
+
+      {/* Custom Dropdown: Conference */}
+      <div>
+        <button
+          onClick={() => setConferenceOpen(j => !j)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1c658c",
+            fontWeight: 600,
+            fontSize: "1rem",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+            padding: "0.5rem 0"
+          }}
+        >
+          Conference {conferenceOpen ? "▲" : "▼"}
+        </button>
+        {conferenceOpen && (
+          <div style={{ paddingLeft: 18 }}>
+            <Nav.Link as={NavLink} to="/conference/national" onClick={() => setSideMenu(false)}>National</Nav.Link>
+            <Nav.Link as={NavLink} to="/conference/international" onClick={() => setSideMenu(false)}>International</Nav.Link>
+          </div>
+        )}
+      </div>
+
+      {/* Custom Dropdown: Patent */}
+      <div>
+        <button
+          onClick={() => setPatentOpen(j => !j)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1c658c",
+            fontWeight: 600,
+            fontSize: "1rem",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+            padding: "0.5rem 0"
+          }}
+        >
+          Patent {patentOpen ? "▲" : "▼"}
+        </button>
+        {patentOpen && (
+          <div style={{ paddingLeft: 18 }}>
+            <Nav.Link as={NavLink} to="/patent/published" onClick={() => setSideMenu(false)}>Published</Nav.Link>
+            <Nav.Link as={NavLink} to="/patent/granted" onClick={() => setSideMenu(false)}>Granted</Nav.Link>
+          </div>
+        )}
+      </div>
+
+      {/* Custom Dropdown: Book */}
+      <div>
+        <button
+          onClick={() => setBookOpen(j => !j)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#1c658c",
+            fontWeight: 600,
+            fontSize: "1rem",
+            cursor: "pointer",
+            width: "100%",
+            textAlign: "left",
+            padding: "0.5rem 0"
+          }}
+        >
+          Book {bookOpen ? "▲" : "▼"}
+        </button>
+        {bookOpen && (
+          <div style={{ paddingLeft: 18 }}>
+            <Nav.Link as={NavLink} to="/book/published" onClick={() => setSideMenu(false)}>Published</Nav.Link>
+          </div>
+        )}
+      </div>
+
       <Nav.Link as={NavLink} to="/fdp" onClick={() => setSideMenu(false)}>FDP</Nav.Link>
       <Nav.Link as={NavLink} to="/membership" onClick={() => setSideMenu(false)}>Membership</Nav.Link>
       <Nav.Link as={NavLink} to="/experience" onClick={() => setSideMenu(false)}>Experience</Nav.Link>

@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './data.css';
 import 'animate.css';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import confer1 from "../pages/pdfs/16-IEEE.pdf";
+
+// Firebase imports
+import { db, auth } from '../firebase';
+import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, orderBy, query } from 'firebase/firestore';
+import { onAuthStateChanged } from "firebase/auth";
 
 const papers = [
   {
@@ -12,7 +17,8 @@ const papers = [
     conference: "IEEE International Conference on Computational Intelligence and Computing Research (IEEE ICCIC)",
     date: "December 18-20, 2014",
     location: "PARK College of Engineering and Teknology, Coimbatore",
-    details: "ISBN: 978-1-4799-3972-5, pp:1062-1067"
+    details: "ISBN: 978-1-4799-3972-5, pp:1062-1067",
+    link: "https://ieeexplore.ieee.org/document/7012920",
   },
   {
     authors: "R.Murugadoss, Dr.M.Ramakrishnan",
@@ -48,7 +54,6 @@ const papers = [
     location: "SASTRA University, Thanjavur-613401, Tamilnadu, India",
     organizer: "School of Computing, School of Electrical & Electronics Engineering, School of Mechanical Engineering"
   },
-  // Newly added entries:
   {
     authors: "Dr. R. Murugadoss",
     year: 2023,
@@ -57,7 +62,7 @@ const papers = [
     date: "June 2023",
     location: "Online",
     details: "ISSN: 2412-6551",
-    pdf:confer1,
+    pdf: confer1,
   },
   {
     authors: "R.Murugadoss, Dr.M.Ramakrishnan",
@@ -82,11 +87,113 @@ const papers = [
     date: "March 2024",
     details: "ISSN: 2395-7890, Vol.12, No.3, pp:230-245"
   },
-
 ];
 
 const Publications = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
+
+  // Manual paper upload state
+  const [manualPapers, setManualPapers] = useState([]);
+  const [form, setForm] = useState({
+    title: "",
+    authors: "",
+    conference: "",
+    date: "",
+    location: "",
+    details: "",
+    pdf: "",
+  });
+  const [notif, setNotif] = useState("");
+  const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Auth state
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, currentUser => {
+      setUser(currentUser);
+    });
+    return () => unsub();
+  }, []);
+
+  // Fetch manual papers from Firestore
+  useEffect(() => {
+    const fetchManualPapers = async () => {
+      try {
+        const q = query(collection(db, "conferenceInternationalPapers"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        const arr = [];
+        snap.forEach(docSnap => arr.push({ ...docSnap.data(), id: docSnap.id }));
+        setManualPapers(arr);
+      } catch (err) {
+        setError("Failed to load manual papers.");
+      }
+    };
+    fetchManualPapers();
+  }, []);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUploading(true);
+    setNotif("");
+    setError("");
+    try {
+      if (!form.title || !form.authors || !form.conference) {
+        throw new Error("Please fill all required fields.");
+      }
+      const newPaper = {
+        title: form.title,
+        authors: form.authors,
+        conference: form.conference,
+        date: form.date,
+        location: form.location,
+        details: form.details,
+        pdf: form.pdf,
+        createdAt: serverTimestamp(),
+      };
+      const docRef = await addDoc(collection(db, "conferenceInternationalPapers"), newPaper);
+      setManualPapers([{ ...newPaper, id: docRef.id }, ...manualPapers]);
+      setForm({
+        title: "",
+        authors: "",
+        conference: "",
+        date: "",
+        location: "",
+        details: "",
+        pdf: "",
+      });
+      setNotif("Paper uploaded.");
+    } catch (error) {
+      setError("Error adding paper: " + error.message);
+    }
+    setUploading(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this paper?")) return;
+    setNotif("");
+    setError("");
+    try {
+      await deleteDoc(doc(db, "conferenceInternationalPapers", id));
+      setManualPapers(manualPapers.filter((paper) => paper.id !== id));
+      setNotif("Paper deleted.");
+    } catch (error) {
+      setError("Error deleting paper: " + error.message);
+    }
+  };
+
+  // Combine static and manual papers for display
+  const allPapers = [
+    ...manualPapers,
+    ...papers.map((paper) => ({
+      ...paper,
+      isManual: false,
+    })),
+  ];
 
   return (
     <div className="conference-intl-container animate__animated animate__fadeIn">
@@ -96,15 +203,158 @@ const Publications = () => {
         </Helmet>
       </HelmetProvider>
       <h2 className="conference-intl-title animate__animated animate__fadeInDown">Research Publications</h2>
+      <div className="container">
+              {user && (
+        <form
+          className="book-upload-form"
+          onSubmit={handleSubmit}
+          style={{
+            marginTop: 32,
+            width: "100%",
+            maxWidth: 420,
+            background: "#f8fafc",
+            borderRadius: "18px",
+            boxShadow: "0 4px 24px rgba(0,122,255,0.07)",
+            padding: "24px 18px 18px 18px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+            border: "1.5px solid #e3f0ff",
+            marginLeft: "auto",
+            marginRight: "auto"
+          }}
+        >
+          <h3 style={{ color: "#007aff", fontSize: "1.2rem", fontWeight: 700, marginBottom: 8 }}>
+            Add a Conference Paper
+          </h3>
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+            required
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="authors"
+            placeholder="Authors (comma separated)"
+            value={form.authors}
+            onChange={handleChange}
+            required
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="conference"
+            placeholder="Conference Name"
+            value={form.conference}
+            onChange={handleChange}
+            required
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="date"
+            placeholder="Date"
+            value={form.date}
+            onChange={handleChange}
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="details"
+            placeholder="Details (ISBN, etc.)"
+            value={form.details}
+            onChange={handleChange}
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <input
+            type="text"
+            name="pdf"
+            placeholder="PDF URL"
+            value={form.pdf}
+            onChange={handleChange}
+            style={{ padding: "10px 12px", border: "1.5px solid #d0e7ff", borderRadius: 8, fontSize: "1rem", background: "#f5faff" }}
+          />
+          <button
+            type="submit"
+            disabled={uploading}
+            style={{
+              background: "linear-gradient(90deg, #007aff 60%, #5ac8fa 100%)",
+              color: "#fff",
+              border: "none",
+              borderRadius: 8,
+              padding: "10px 0",
+              fontSize: "1.08rem",
+              fontWeight: 700,
+              cursor: "pointer",
+              boxShadow: "0 2px 8px rgba(0,122,255,0.10)",
+              transition: "background 0.2s, transform 0.15s"
+            }}
+          >
+            {uploading ? "Saving..." : "Upload"}
+          </button>
+          {notif && (
+            <div
+              className="success-msg"
+              style={{
+                background: "#e6f9ed",
+                color: "#1a7f37",
+                border: "1.5px solid #b6f2d2",
+                borderRadius: "8px",
+                padding: "10px 14px",
+                marginTop: "10px",
+                fontWeight: 600,
+                fontSize: "1rem",
+                boxShadow: "0 2px 8px rgba(26,127,55,0.07)",
+                textAlign: "center"
+              }}
+            >
+              {notif}
+            </div>
+          )}
+          {error && (
+            <div
+              className="error-msg"
+              style={{
+                background: "#ffeaea",
+                color: "#c53030",
+                border: "1.5px solid #ffc2c2",
+                borderRadius: "8px",
+                padding: "10px 14px",
+                marginTop: "10px",
+                fontWeight: 600,
+                fontSize: "1rem",
+                boxShadow: "0 2px 8px rgba(197,48,48,0.07)",
+                textAlign: "center"
+              }}
+            >
+              {error}
+            </div>
+          )}
+        </form>
+      )}
+      </div>
+      
       <ul className="conference-intl-list">
-        {papers.map((paper, idx) => (
+        {allPapers.map((paper, idx) => (
           <li
-            key={idx}
+            key={paper.id || idx}
             className="conference-intl-item animate__animated animate__fadeInUp"
             style={{ animationDelay: `${0.15 + idx * 0.07}s` }}
           >
             <strong>{paper.title}</strong><br />
-            <em>{paper.authors}</em> {paper.year && <>({paper.year})</>}<br />
+            <em>{Array.isArray(paper.authors) ? paper.authors.join(", ") : paper.authors}</em> {paper.year && <>({paper.year})</>}<br />
             {paper.conference && <span>{paper.conference}<br /></span>}
             {paper.journal && <span>{paper.journal}<br /></span>}
             {paper.date && <span><strong>Date:</strong> {paper.date}<br /></span>}
@@ -137,6 +387,23 @@ const Publications = () => {
                 onMouseOut={e => e.currentTarget.style.background = "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)"}
               >
                 📄 View PDF
+              </button>
+            )}
+            {paper.id && user && (
+              <button
+                className="delete-book-btn"
+                onClick={() => handleDelete(paper.id)}
+                style={{
+                  marginLeft: 12,
+                  background: "#ff3b30",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "4px 12px",
+                  cursor: "pointer"
+                }}
+              >
+                Delete
               </button>
             )}
           </li>
@@ -195,6 +462,9 @@ const Publications = () => {
           </div>
         </div>
       )}
+
+      {/* Manual Paper Upload Section */}
+
     </div>
   );
 };

@@ -6,7 +6,7 @@ import './CSS/About.css';
 import certificateImages from '../assets/Routes/AllCertificate';
 import profileImg from '../assets/img/muragadoss.gif'; // Add this import
 import 'animate.css';
-
+import Subject from './subject'; // Import the Subject component
 function About() {
   const [lightboxController, setLightboxController] = useState({
     toggler: false,
@@ -161,10 +161,14 @@ function About() {
           </tbody>
         </table>
       </div>
+         <div className="container">
+            <Subject/>
+        </div>
   </div>
+ 
 </Container>
-        
-   
+      
+ 
 
     </>
   );

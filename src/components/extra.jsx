@@ -8,7 +8,6 @@ import { Cloudinary } from '@cloudinary/url-gen';
 import { auto } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
-import Subject from "./subject";
 
 // Cloudinary parameters
 const CLOUD_NAME = "dtpqjzpnz";
@@ -288,7 +287,6 @@ function Extra() {
       </div>
       <div style={{ marginTop: "2rem", textAlign: "center" }}>
       
-      <Subject/>
       </div>
     </div>
   );

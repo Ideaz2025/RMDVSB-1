@@ -379,20 +379,24 @@ const Books = () => {
                   <strong>Issue Date:</strong> {book.issueDate}<br />
                 </>
               )}
-              <button
-                className="delete-book-btn"
-                onClick={() => handleDelete(book.id)}
-                style={responsiveStyles.btn}
-              >
-                Delete
-              </button>
-              <button
-                className="edit-book-btn"
-                onClick={() => handleEdit(book)}
-                style={responsiveStyles.editBtn}
-              >
-                Edit
-              </button>
+              {user && (
+                <>
+                  <button
+                    className="delete-book-btn"
+                    onClick={() => handleDelete(book.id)}
+                    style={responsiveStyles.btn}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    className="edit-book-btn"
+                    onClick={() => handleEdit(book)}
+                    style={responsiveStyles.editBtn}
+                  >
+                    Edit
+                  </button>
+                </>
+              )}
             </div>
           </li>
         ))}

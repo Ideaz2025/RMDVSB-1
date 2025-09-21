@@ -365,11 +365,13 @@ const ConferenceList = () => {
             {paper.copyright && <span>© {paper.copyright}</span>}
             <br />
             {paper.pdf && (
-              <button
+              <a
+                href={paper.pdf}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="pdf-btn"
-                onClick={() => setPdfUrl(paper.pdf)}
-                type="button"
                 style={{
+                  display: "inline-block",
                   marginTop: "0.5rem",
                   padding: "0.4rem 1.1rem",
                   background: "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)",
@@ -388,7 +390,7 @@ const ConferenceList = () => {
                 onMouseOut={e => e.currentTarget.style.background = "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)"}
               >
                 📄 View PDF
-              </button>
+              </a>
             )}
             {user && (
               <>
@@ -451,11 +453,13 @@ const ConferenceList = () => {
             {paper.copyright && <span>© {paper.copyright}</span>}
             <br />
             {paper.pdf && (
-              <button
+              <a
+                href={paper.pdf}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="pdf-btn"
-                onClick={() => setPdfUrl(paper.pdf)}
-                type="button"
                 style={{
+                  display: "inline-block",
                   marginTop: "0.5rem",
                   padding: "0.4rem 1.1rem",
                   background: "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)",
@@ -474,7 +478,7 @@ const ConferenceList = () => {
                 onMouseOut={e => e.currentTarget.style.background = "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)"}
               >
                 📄 View PDF
-              </button>
+              </a>
             )}
           </li>
         ))}

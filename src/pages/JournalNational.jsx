@@ -462,38 +462,42 @@ const JournalList = () => {
                     📄 View PDF
                   </button>
                 )}
-                <button
-                  className="delete-book-btn"
-                  onClick={() => handleDelete(journal)}
-                  style={{
-                    marginTop: '8px',
-                    marginLeft: '8px',
-                    background: '#ff3b30',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 12px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Delete
-                </button>
-                <button
-                  className="edit-book-btn"
-                  onClick={() => handleEdit(journal)}
-                  style={{
-                    marginTop: '8px',
-                    marginLeft: '8px',
-                    background: '#007aff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 12px',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Edit
-                </button>
+                {user && (
+                  <>
+                    <button
+                      className="delete-book-btn"
+                      onClick={() => handleDelete(journal)}
+                      style={{
+                        marginTop: '8px',
+                        marginLeft: '8px',
+                        background: '#ff3b30',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '4px 12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Delete
+                    </button>
+                    <button
+                      className="edit-book-btn"
+                      onClick={() => handleEdit(journal)}
+                      style={{
+                        marginTop: '8px',
+                        marginLeft: '8px',
+                        background: '#007aff',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '4px 12px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Update
+                    </button>
+                  </>
+                )}
               </li>
             ))}
             {nationalJournals.map((journal, idx) => (

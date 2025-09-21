@@ -149,6 +149,9 @@ const ConferenceList = () => {
     }
   };
 
+  // Combine manual and static papers in one list
+  const allPapers = [...manualPapers, ...conferencePapers];
+
   return (
     <div className="conference-container animate__animated animate__fadeIn">
       <h2 className="conference-title animate__animated animate__fadeInDown">
@@ -336,11 +339,17 @@ const ConferenceList = () => {
         </form>
       )}
 
-      {/* Manual Papers List */}
-      <ul className="conference-list">
-        {manualPapers.map((paper, idx) => (
+      {/* Display all papers in two columns (responsive) */}
+      <ul className="conference-list" style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, 1fr)",
+        gap: "1.5rem",
+        padding: 0,
+        listStyle: "none",
+      }}>
+        {allPapers.map((paper, idx) => (
           <li
-            key={paper.id}
+            key={paper.id || idx}
             className="conference-item animate__animated animate__fadeInUp"
             style={{
               animationDelay: `${0.15 + idx * 0.07}s`,
@@ -390,7 +399,8 @@ const ConferenceList = () => {
                 📄 View PDF
               </button>
             )}
-            {user && (
+            {/* Show edit/delete only for manual papers and logged in user */}
+            {user && manualPapers.some(mp => mp.id === paper.id) && (
               <>
                 <button
                   className="delete-book-btn"
@@ -430,56 +440,7 @@ const ConferenceList = () => {
         ))}
       </ul>
 
-      {/* Static Papers List */}
-      <ul className="conference-list">
-        {conferencePapers.map((paper, idx) => (
-          <li
-            key={paper.id}
-            className="conference-item animate__animated animate__fadeInUp"
-            style={{ animationDelay: `${0.15 + idx * 0.07}s` }}
-          >
-            <strong>{paper.authors}</strong>
-            <br />
-            <em>{paper.title}</em>
-            <br />
-            {paper.event}, {paper.date}
-            <br />
-            {paper.location}
-            <br />
-            {paper.isbn && <span>{paper.isbn}</span>}
-            <br />
-            {paper.copyright && <span>© {paper.copyright}</span>}
-            <br />
-            {paper.pdf && (
-              <button
-                className="pdf-btn"
-                onClick={() => setPdfUrl(paper.pdf)}
-                type="button"
-                style={{
-                  marginTop: "0.5rem",
-                  padding: "0.4rem 1.1rem",
-                  background: "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                  textDecoration: "none",
-                  boxShadow: "0 2px 8px rgba(28,101,140,0.10)",
-                  transition: "background 0.2s, box-shadow 0.2s",
-                  letterSpacing: ".01em",
-                  cursor: "pointer"
-                }}
-                onMouseOver={e => e.currentTarget.style.background = "#398ab9"}
-                onMouseOut={e => e.currentTarget.style.background = "linear-gradient(90deg, #226ab7 60%, #1c658c 100%)"}
-              >
-                📄 View PDF
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-
+      {/* PDF Modal unchanged */}
       {pdfUrl && (
         <div className="pdf-modal" onClick={() => setPdfUrl(null)}>
           <div
